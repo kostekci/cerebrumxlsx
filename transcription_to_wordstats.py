@@ -12,7 +12,7 @@ for path in paths:
     files += [path+f for f in listdir(path) if isfile(join(path, f))]
 
 #final df for file based wordcounts on all files
-dfz = pd.DataFrame({'Word':[], 'Count':[], 'VideoName':[]}, columns = ['Word', 'Count', 'VideoName'])
+statsdf = pd.DataFrame({'Word':[], 'Count':[], 'VideoName':[]}, columns = ['Word', 'Count', 'VideoName'])
 
 for file in files:
     text = open(file, encoding="utf8")
@@ -49,20 +49,24 @@ for file in files:
     dsorted = {k: v for k, v in sorted(d.items(), key=lambda item: item[1])}
 
     #df for word counts on single file created form sorted dict
-    dfy = pd.DataFrame(dsorted.items(),columns=['Word', 'Count'])
-    dfy['VideoName']=text.name
+    filedf = pd.DataFrame(dsorted.items(),columns=['Word', 'Count'])
+    filedf['VideoName']=text.name
     
-    dfz = dfz.append(dfy)
+    statsdf = statsdf.append(filedf)
     text.close()
 #end of for (iterated on all files)
 
-dfz = dfz.sort_values(by=['VideoName','Count'], ascending=False)
+statsdf = statsdf.sort_values(by=['VideoName','Count'], ascending=False)
+
+prefix_length = len('d:\\projects\\german_only_text\\')
+
+statsdf["VideoName"] = statsdf["VideoName"].str[prefix_length:]
 
 #Create a Pandas Excel writer
 writer = pd.ExcelWriter('WordStats.xlsx', engine='xlsxwriter')
 
 #Convert the dataframe to an excel object
-dfz.to_excel(writer, sheet_name='Stats')
+statsdf.to_excel(writer, sheet_name='Stats')
 
 #Close the Pandas Excel writer and output the Excel file.
 writer.save()
