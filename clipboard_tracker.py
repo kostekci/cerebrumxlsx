@@ -9,20 +9,19 @@ d1 = {'Words': ['1']}
 df1 = pandas.DataFrame(data=d1)
 
 while True:
-    #text = Tk().clipboard_get()
     
     # get clipboard data
     win32clipboard.OpenClipboard()
     text = win32clipboard.GetClipboardData()
     win32clipboard.CloseClipboard()
-    print(text)
     
     if text != last_text:
         
         last_text=text
         
-        book = load_workbook('test.xlsx')
-        writer = pandas.ExcelWriter('test.xlsx', engine='openpyxl')
+        #append to file instead of write
+        book = load_workbook('CheckedWords.xlsx')
+        writer = pandas.ExcelWriter('CheckedWords.xlsx', engine='openpyxl')
         writer.book = book
         writer.sheets = {ws.title: ws for ws in book.worksheets}
         
